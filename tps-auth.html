@@ -87,7 +87,7 @@
     <script>
       
 
-
+    var db = undefined;
 
         var phonediv = document.getElementById('phonediv');
         var confirmdiv = document.getElementById('confirmdiv');
@@ -100,7 +100,7 @@
 
         Calls submitPhoneNumberAuth() when the captcha is verified*/
 
-        function chechAuth(config) {
+        function checkAuth(config) {
          
             window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
                 "recaptcha-container",
