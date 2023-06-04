@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+        .main {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30%;
+        }
+
+        .main div {
+            margin: 5px 0px;
+        }
+
+        .recaptcha-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #confirmdiv,
+        #codediv {
+            display: none;
+        }
+
+        input {
+          
+        }
+
+ 
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="main">
+        <!-- Add two inputs for "phoneNumber" and "code" -->
+
+        <div>
+            <p style="text-align: center; font-size: larger;">Welcome to tps super admin app</p>
+            <p id="loginText" style="text-align: center;">Login</p>
+        </div>
+        <div id="phonediv">
+            <input class="input-field" placeholder="018xxxxxxxxx" type="tel" value="" id="phoneNumber" />
+        </div>
+        <div id="codediv">
+            <input class="input-field" placeholder="Type your OTP" type="text" id="code" />
+        </div>
+
+        <!-- Add two buttons to submit the inputs -->
+        <div id="signindiv">
+            <button class="btn" id="sign-in-button" onclick="submitPhoneNumberAuth()">
+                GET OTP
+            </button>
+        </div>
+        <div id="confirmdiv">
+            <button class="btn" id="confirm-code" onclick="submitPhoneNumberAuthCode()">
+                CONFIRM OTP CODE
+            </button>
+        </div>
+
+        <div>
+            <p style="font-size: small; color: #0056b3;">Note: Can't request OTP more than 10 times per day</p>
+        </div>
+
+    </div>
+    <!-- Add a container for reCaptcha -->
+    <div id="recaptcha-container"></div>
+
+    <!-- Add the latest firebase dependecies from CDN -->
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    
+    <script>
+      
+
+
+
+        var phonediv = document.getElementById('phonediv');
+        var confirmdiv = document.getElementById('confirmdiv');
+        var codediv = document.getElementById('codediv');
+        var signindiv = document.getElementById('signindiv');
+
+        var loginText = document.getElementById('loginText');
+
+        /**Create a Recaptcha verifier instance globally
+        Calls submitPhoneNumberAuth() when the captcha is verified*/
+
+        function chechAuth(config) {
+         
+            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+                "recaptcha-container",
+                {
+                    size: "normal",
+                    callback: function (response) {
+                        submitPhoneNumberAuth();
+                    }
+                }
+            );
+
+
+            //This function runs everytime the auth state changes. Use to verify if the user is logged in
+            firebase.auth().onAuthStateChanged(function (user) {
+                if (user) {
+                    console.log("USER LOGGED IN");
+                    location.replace("./control.html")
+                } else {
+                    // No user is signed in.
+                    console.log("USER NOT LOGGED IN");
+                }
+            });
+
+        }
+
+
+        // This function runs when the 'sign-in-button' is clicked
+        // Takes the value from the 'phoneNumber' input and sends SMS to that phone number
+        function submitPhoneNumberAuth() {
+            var phoneNumber = document.getElementById("phoneNumber").value;
+            phoneNumber = "+88" + phoneNumber
+            var appVerifier = window.recaptchaVerifier;
+            firebase
+                .auth()
+                .signInWithPhoneNumber(phoneNumber, appVerifier)
+                .then(function (confirmationResult) {
+                    window.confirmationResult = confirmationResult;
+
+                    phonediv.style.display = 'none';
+                    signindiv.style.display = 'none';
+                    codediv.style.display = 'block';
+                    confirmdiv.style.display = 'block'
+                    loginText.innerHTML = 'Confirm OTP'
+                })
+                .catch(function (error) {
+                    //alert('Try again')
+
+                    console.log(error);
+                });
+        }
+
+        // This function runs when the 'confirm-code' button is clicked
+        // Takes the value from the 'code' input and submits the code to verify the phone number
+        // Return a user object if the authentication was successful, and auth is complete
+        function submitPhoneNumberAuthCode() {
+            var code = document.getElementById("code").value;
+            confirmationResult
+                .confirm(code)
+                .then(function (result) {
+                    var user = result.user;
+
+                    location.replace("./controller.html")
+                    console.log(user);
+                    console.log(user.uid);
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+
+
+    </script>
+</body>
+
+</html>
