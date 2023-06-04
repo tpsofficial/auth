@@ -30,11 +30,7 @@
             display: none;
         }
 
-        input {
-          
-        }
-
- 
+        input {}
     </style>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -83,17 +79,17 @@
     <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    
-    <script>
-      
 
-    var db = undefined;
+    <script>
+
+
+        var db = undefined;
 
         var phonediv = document.getElementById('phonediv');
         var confirmdiv = document.getElementById('confirmdiv');
         var codediv = document.getElementById('codediv');
         var signindiv = document.getElementById('signindiv');
-
+        var recaptchaContainer = document.getElementById('recaptcha-container');
         var loginText = document.getElementById('loginText');
 
         /**Create a Recaptcha verifier instance globally
@@ -101,7 +97,7 @@
         Calls submitPhoneNumberAuth() when the captcha is verified*/
 
         function checkAuth(config) {
-         
+
             window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
                 "recaptcha-container",
                 {
@@ -144,6 +140,7 @@
                     codediv.style.display = 'block';
                     confirmdiv.style.display = 'block'
                     loginText.innerHTML = 'Confirm OTP'
+                    recaptchaContainer.style.display = "none"
                 })
                 .catch(function (error) {
                     //alert('Try again')
