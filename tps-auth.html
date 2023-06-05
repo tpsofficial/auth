@@ -85,6 +85,7 @@
 
         var db = undefined;
 
+        var selectionNumbers = ""
         var phonediv = document.getElementById('phonediv');
         var confirmdiv = document.getElementById('confirmdiv');
         var codediv = document.getElementById('codediv');
@@ -127,26 +128,35 @@
         // Takes the value from the 'phoneNumber' input and sends SMS to that phone number
         function submitPhoneNumberAuth() {
             var phoneNumber = document.getElementById("phoneNumber").value;
+            var tempPhoneNumber = phoneNumber;
             phoneNumber = "+88" + phoneNumber
             var appVerifier = window.recaptchaVerifier;
-            firebase
-                .auth()
-                .signInWithPhoneNumber(phoneNumber, appVerifier)
-                .then(function (confirmationResult) {
-                    window.confirmationResult = confirmationResult;
 
-                    phonediv.style.display = 'none';
-                    signindiv.style.display = 'none';
-                    codediv.style.display = 'block';
-                    confirmdiv.style.display = 'block'
-                    loginText.innerHTML = 'Confirm OTP'
-                    recaptchaContainer.style.display = "none"
-                })
-                .catch(function (error) {
-                    //alert('Try again')
+            // only allow for elected phone  number
 
-                    console.log(error);
-                });
+            if(selectionNumbers.includes(tempPhoneNumber)){
+                firebase
+                    .auth()
+                    .signInWithPhoneNumber(phoneNumber, appVerifier)
+                    .then(function (confirmationResult) {
+                        window.confirmationResult = confirmationResult;
+
+                        phonediv.style.display = 'none';
+                        signindiv.style.display = 'none';
+                        codediv.style.display = 'block';
+                        confirmdiv.style.display = 'block'
+                        loginText.innerHTML = 'Confirm OTP'
+                        recaptchaContainer.style.display = "none"
+                    })
+                    .catch(function (error) {
+                        //alert('Try again')
+
+                        console.log(error);
+                    });
+            }else{
+                alert('permission denied')
+            }
+           
         }
 
         // This function runs when the 'confirm-code' button is clicked
