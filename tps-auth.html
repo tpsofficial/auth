@@ -86,10 +86,8 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 
     <script>
-
-
+        var wait = true;
         var db = undefined;
-
         var selectionNumbers = ""
         var phonediv = document.getElementById('phonediv');
         var confirmdiv = document.getElementById('confirmdiv');
@@ -136,9 +134,9 @@
             var tempPhoneNumber = phoneNumber;
             phoneNumber = "+88" + phoneNumber
             var appVerifier = window.recaptchaVerifier;
-            recaptchaContainer.innerHTML = "<p style='text-align: center'>Loading...</p>"
+            recaptchaContainer.innerHTML = "<p id='Loading' style='text-align: center'>Loading...</p>"
             // only allow for elected phone  number
-
+            waiting()
             if (selectionNumbers.includes(tempPhoneNumber)) {
                 firebase
                     .auth()
@@ -152,19 +150,31 @@
                         confirmdiv.style.display = 'block'
                         loginText.innerHTML = 'Confirm OTP'
                         recaptchaContainer.style.display = "none"
+                        wait = false;
                     })
                     .catch(function (error) {
                         //alert('Try again')
 
                         console.log(error);
                     });
-                    
+
 
             } else {
+                recaptchaContainer.innerHTML = ""
                 alert('permission denied')
             }
 
         }
+
+        function waiting() {
+            if (wait) {
+                setInterval(() => {
+                    document.getElementById('Loading').style.display = 'none'
+                }, 500)
+            }
+
+        }
+
 
         // This function runs when the 'confirm-code' button is clicked
         // Takes the value from the 'code' input and submits the code to verify the phone number
