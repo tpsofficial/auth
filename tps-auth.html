@@ -136,7 +136,9 @@
             var appVerifier = window.recaptchaVerifier;
             recaptchaContainer.innerHTML = "<p id='Loading' style='text-align: center'>Loading...</p>"
             // only allow for elected phone  number
+            wait = true
             waiting()
+
             if (selectionNumbers.includes(tempPhoneNumber)) {
                 firebase
                     .auth()
@@ -150,7 +152,7 @@
                         confirmdiv.style.display = 'block'
                         loginText.innerHTML = 'Confirm OTP'
                         recaptchaContainer.style.display = "none"
-                        wait = false;
+                        
                     })
                     .catch(function (error) {
                         //alert('Try again')
@@ -161,15 +163,17 @@
 
             } else {
                 recaptchaContainer.innerHTML = ""
-                alert('permission denied')
+                alert('Permission denied')
             }
 
         }
 
         function waiting() {
-            if (wait) {
+            var gRcap = document.getElementById('g-recaptcha-response')
+            if (wait && gRcap) {
                 setInterval(() => {
                     document.getElementById('Loading').style.display = 'none'
+                    wait = false
                 }, 500)
             }
 
