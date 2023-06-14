@@ -17,6 +17,8 @@
 
         .main div {
             margin: 5px 0px;
+            display: flex;
+            flex-direction: column;
         }
 
         .recaptcha-container {
@@ -29,8 +31,6 @@
         #codediv {
             display: none;
         }
-
-        input {}
     </style>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -61,10 +61,15 @@
             <button class="btn" id="confirm-code" onclick="submitPhoneNumberAuthCode()">
                 CONFIRM OTP CODE
             </button>
+            <br>
+            <button class="btn-sm-red" onclick="window.location.reload()">Having trable? Reload Again</button>
         </div>
 
         <div>
             <p style="font-size: small; color: #0056b3;">Note: Can't request OTP more than 10 times per day</p>
+
+
+
         </div>
 
     </div>
@@ -131,10 +136,10 @@
             var tempPhoneNumber = phoneNumber;
             phoneNumber = "+88" + phoneNumber
             var appVerifier = window.recaptchaVerifier;
-
+            recaptchaContainer.innerHTML = "<p style='text-align: center'>Loading...</p>"
             // only allow for elected phone  number
 
-            if(selectionNumbers.includes(tempPhoneNumber)){
+            if (selectionNumbers.includes(tempPhoneNumber)) {
                 firebase
                     .auth()
                     .signInWithPhoneNumber(phoneNumber, appVerifier)
@@ -153,10 +158,12 @@
 
                         console.log(error);
                     });
-            }else{
+                    
+
+            } else {
                 alert('permission denied')
             }
-           
+
         }
 
         // This function runs when the 'confirm-code' button is clicked
