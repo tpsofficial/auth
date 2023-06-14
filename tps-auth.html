@@ -152,7 +152,7 @@
                         confirmdiv.style.display = 'block'
                         loginText.innerHTML = 'Confirm OTP'
                         recaptchaContainer.style.display = "none"
-                        
+
                     })
                     .catch(function (error) {
                         //alert('Try again')
@@ -169,11 +169,14 @@
         }
 
         function waiting() {
-            var gRcap = document.getElementById('g-recaptcha-response')
-            if (wait && gRcap) {
+
+            if (wait) {
                 setInterval(() => {
-                    document.getElementById('Loading').style.display = 'none'
-                    wait = false
+                    var gRcap = document.getElementById('g-recaptcha-response')
+                    if (gRcap) {
+                        document.getElementById('Loading').style.display = 'none'
+                        wait = false
+                    }
                 }, 500)
             }
 
